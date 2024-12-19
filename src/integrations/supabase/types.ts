@@ -30,6 +30,33 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          country: string
+          customer_name: string
+          id: string
+          rating: number
+          review_date: string
+          user_id: string
+        }
+        Insert: {
+          country: string
+          customer_name: string
+          id?: string
+          rating: number
+          review_date?: string
+          user_id: string
+        }
+        Update: {
+          country?: string
+          customer_name?: string
+          id?: string
+          rating?: number
+          review_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
