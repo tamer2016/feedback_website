@@ -31,7 +31,7 @@ const AuthPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-center text-3xl font-bold mb-8">Welcome</h2>
+        <h2 className="text-center text-3xl font-bold mb-8">مرحباً بك</h2>
         <Auth
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}

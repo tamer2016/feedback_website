@@ -25,10 +25,10 @@ const Index = () => {
     try {
       await supabase.auth.signOut();
       navigate("/auth");
-      toast.success("Logged out successfully");
+      toast.success("تم تسجيل الخروج بنجاح");
     } catch (error) {
       console.error("Error logging out:", error);
-      toast.error("Error logging out");
+      toast.error("حدث خطأ أثناء تسجيل الخروج");
     }
   };
 
@@ -39,13 +39,13 @@ const Index = () => {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Welcome, {user.email}</h1>
+            <h1 className="text-2xl font-bold">مرحباً، {user.email}</h1>
             <Button onClick={handleLogout} variant="outline">
-              Logout
+              تسجيل الخروج
             </Button>
           </div>
           <p className="text-gray-600">
-            You are now logged in to your account.
+            تم تسجيل دخولك بنجاح إلى حسابك.
           </p>
         </div>
       </div>
