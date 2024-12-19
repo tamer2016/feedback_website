@@ -11,6 +11,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface Review {
   id: string;
@@ -25,6 +34,12 @@ const Index = () => {
   const [user, setUser] = useState<any>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newReview, setNewReview] = useState({
+    customer_name: "",
+    country: "",
+    rating: 5,
+  });
 
   useEffect(() => {
     const getUser = async () => {
@@ -73,6 +88,30 @@ const Index = () => {
     }
   };
 
+  const handleSubmitReview = async () => {
+    if (!newReview.customer_name || !newReview.country || !newReview.rating) {
+      toast.error("الرجاء ملء جميع الحقول المطلوبة");
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from('reviews').insert({
+        ...newReview,
+        user_id: user.id
+      });
+
+      if (error) throw error;
+
+      toast.success("تم إضافة التقييم بنجاح");
+      setIsDialogOpen(false);
+      setNewReview({ customer_name: "", country: "", rating: 5 });
+      fetchReviews();
+    } catch (error) {
+      console.error('Error adding review:', error);
+      toast.error("حدث خطأ أثناء إضافة التقييم");
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -87,7 +126,13 @@ const Index = () => {
           </div>
           
           <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">تقييمات العملاء</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">تقييمات العملاء</h2>
+              <Button onClick={() => setIsDialogOpen(true)} className="w-full md:w-auto">
+                إضافة تقييم جديد
+              </Button>
+            </div>
+
             {loading ? (
               <p className="text-center text-gray-600">جاري التحميل...</p>
             ) : reviews.length === 0 ? (
@@ -117,6 +162,48 @@ const Index = () => {
               </Table>
             )}
           </div>
+
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle className="text-right">إضافة تقييم جديد</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="customer_name">اسم العميل</Label>
+                  <Input
+                    id="customer_name"
+                    value={newReview.customer_name}
+                    onChange={(e) => setNewReview({ ...newReview, customer_name: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="country">البلد</Label>
+                  <Input
+                    id="country"
+                    value={newReview.country}
+                    onChange={(e) => setNewReview({ ...newReview, country: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="rating">التقييم (من 5)</Label>
+                  <Input
+                    id="rating"
+                    type="number"
+                    min="1"
+                    max="5"
+                    value={newReview.rating}
+                    onChange={(e) => setNewReview({ ...newReview, rating: parseInt(e.target.value) })}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleSubmitReview} className="w-full">
+                  إضافة التقييم
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
